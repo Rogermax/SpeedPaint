@@ -1,7 +1,9 @@
 package com.gmail.rogermoreta.speedpaint;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +23,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
  
 	private GameThread thread;
     Paint p;
+    private long beginTime;
     
     // para los FPS
  	private String avgFps;
@@ -32,6 +35,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
  		int cont = 0;
         int width;
         int height;
+		int level = 0;
+		long time_milis = 0;
         //private int xPos,yPos;
         private Pair<Integer, Integer> lastPair = null;
         private Bitmap lienzoBg;
@@ -92,6 +97,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         public void surfaceCreated(SurfaceHolder holder) {
 
         //if it is the first time the thread starts
+
+        beginTime = System.currentTimeMillis();
         if(thread.getState() == Thread.State.NEW){
         	GameThread.setRunning(true);
         	thread.start();
@@ -128,8 +135,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 
                 switch(event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                	if (lastPair == null) lastPair = aux;
-                	cola_click.add(aux);
+                	lastPair = aux;
                 	break;
                 case MotionEvent.ACTION_MOVE:
                 	cola_click.add(aux);
@@ -175,7 +181,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawBitmap(lienzoBg,0,0,null);
             canvas.drawBitmap(lienzo,0,0,null);
             canvas.drawBitmap(bg, 0, 0, null);
+
+    		displayTime(canvas, ""+(10*1000-time_milis)/1000+":"+((10*1000-time_milis)-((10*1000-time_milis)/1000)*1000)/10);
+    		displayPercentage(canvas, ""+pixels*100/total_pixels+"%");
     		displayFps(canvas, avgFps);
+    		displayLevel(canvas, "level: "+level);
         }
         
         /**
@@ -199,8 +209,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	{
 
         		//pintar cuadrado
-                int x = cola_click.get(ii).first;
-                int y = cola_click.get(ii).second;
+        		//Log.i(TAG,"level<<24: "+Integer.toHexString(level<<24));
+        		//int pintura = (103409*level+36469)%0x00ffffff;
+        		int color = 0x88000000|(0x000000ff << level);
+                int x = lastPair.first;
+                int y = lastPair.second;
 	        	for (int i = x-ancho_pinzel/2; i < x+ancho_pinzel/2; ++i)
 	        	{
 	            	for (int j = y-alto_pinzel/2; j < y+alto_pinzel/2; ++j)
@@ -209,7 +222,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	            		if (i > width/22 && i < 21*width/22 && j >= height/40 && j < 11*height/14 && !mask_paint[i][j]) {
 	            			mask_paint[i][j] = true;
 	            			pixels++;
-	            			lienzo.setPixel(i, j, 0xff0000ff);
+	            			lienzo.setPixel(i, j, color);
 	            		}
 	            	}
 	        	}
@@ -229,8 +242,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i+j2 > width/22 && i+j2 < 21*width/22 && j >= height/40 && j < 11*height/14 && !mask_paint[i+j2][j]) {
         	            			mask_paint[i+j2][j] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i+j2, j, 0xff00ff00);
-        	            			else lienzo.setPixel(i+j2, j, 0xffff0000);
+        	            			lienzo.setPixel(i+j2, j, color);
         	            		}
         	            	}
         	            	for (int j2 = 0; j2 < alto_pinzel; ++j2)
@@ -238,8 +250,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i > width/22 && i < 21*width/22 && j+j2 >= height/40 && j+j2 < 11*height/14 && !mask_paint[i][j+j2]) {
         	            			mask_paint[i][j+j2] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i, j+j2, 0xff00ff00);
-        	            			else lienzo.setPixel(i, j+j2, 0xffff0000);
+        	            			lienzo.setPixel(i, j+j2, color);
         	            		}
         	            	}
         	        	}
@@ -256,8 +267,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i+j2 > width/22 && i+j2 < 21*width/22 && j >= height/40 && j < 11*height/14 && !mask_paint[i+j2][j]) {
         	            			mask_paint[i+j2][j] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i+j2, j, 0xff00ff00);
-        	            			else lienzo.setPixel(i+j2, j, 0xffff0000);
+        	            			lienzo.setPixel(i+j2, j, color);
         	            		}
         	            	}
         	            	for (int j2 = 0; j2 < alto_pinzel; ++j2)
@@ -265,8 +275,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i > width/22 && i < 21*width/22 && j-j2 >= height/40 && j-j2 < 11*height/14 && !mask_paint[i][j-j2]) {
         	            			mask_paint[i][j-j2] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i, j-j2, 0xff00ff00);
-        	            			else lienzo.setPixel(i, j-j2, 0xffff0000);
+        	            			lienzo.setPixel(i, j-j2, color);
         	            		}
         	            	}
         	        	}
@@ -286,8 +295,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i-j2 > width/22 && i-j2 < 21*width/22 && j >= height/40 && j < 11*height/14 && !mask_paint[i-j2][j]) {
         	            			mask_paint[i-j2][j] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i-j2, j, 0xff00ff00);
-        	            			else lienzo.setPixel(i-j2, j, 0xffff0000);
+        	            			lienzo.setPixel(i-j2, j, color);
         	            		}
         	            	}
         	            	for (int j2 = 0; j2 < alto_pinzel; ++j2)
@@ -295,8 +303,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i > width/22 && i < 21*width/22 && j+j2 >= height/40 && j+j2 < 11*height/14 && !mask_paint[i][j+j2]) {
         	            			mask_paint[i][j+j2] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i, j+j2, 0xff00ff00);
-        	            			else lienzo.setPixel(i, j+j2, 0xffff0000);
+        	            			lienzo.setPixel(i, j+j2, color);
         	            		}
         	            	}
         	        	}
@@ -314,8 +321,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i-j2 > width/22 && i-j2 < 21*width/22 && j >= height/40 && j < 11*height/14 && !mask_paint[i-j2][j]) {
         	            			mask_paint[i-j2][j] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i-j2, j, 0xff00ff00);
-        	            			lienzo.setPixel(i-j2, j, 0xffff0000);
+        	            			lienzo.setPixel(i-j2, j, color);
         	            		}
         	            	}
         	            	for (int j2 = 0; j2 < alto_pinzel; ++j2)
@@ -323,20 +329,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         	            		if (i > width/22 && i < 21*width/22 && j-j2 >= height/40 && j-j2 < 11*height/14 && !mask_paint[i][j-j2]) {
         	            			mask_paint[i][j-j2] = true;
         	            			pixels++;
-        	            			if (pasos == i2-1) lienzo.setPixel(i, j-j2, 0xff00ff00);
-        	            			lienzo.setPixel(i, j-j2, 0xffff0000);
+        	            			lienzo.setPixel(i, j-j2, color);
         	            		}
         	            	}
         	        	}
         			}
         		}
-            	Log.i(TAG, "Last Pair: "+"("+lastPair.first+","+lastPair.second+")");
 	        	lastPair = new Pair<Integer, Integer>(cola_click.get(ii).first, cola_click.get(ii).second);
-            	Log.i(TAG, "Next Pair: "+"("+lastPair.first+","+lastPair.second+")");
+	        	
         	}
-        	cola_click.clear();
-        	if (pixels > 0.99*total_pixels)
-        		Log.i("GameView", "Partida al: "+pixels*100/total_pixels);
+        	cola_click = new ArrayList<Pair<Integer,Integer>>();
+        	if (pixels >= 0.9*total_pixels)
+        	{
+        		pixels = 0;
+                lienzo = Bitmap.createBitmap(width, 6*height/7, Bitmap.Config.ARGB_8888);
+                mask_paint = new boolean[width][height];
+                int tiempo_regeneracion = 3000;
+            	beginTime = Math.min(System.currentTimeMillis(), beginTime+tiempo_regeneracion);
+        		level++;
+        	}
+        	time_milis = System.currentTimeMillis()-beginTime;
+        	if (time_milis > 10*1000) ((Activity) getContext()).finish();
+        	//	Log.i("GameView", "Partida al: "+pixels*100/total_pixels);
         	
         	
     	}
@@ -348,5 +362,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     			canvas.drawText(fps, this.getWidth() - 100, 50, paint);
     		}
     	}
+    	private void displayPercentage(Canvas canvas, String perc) {
+    		if (canvas != null && perc != null) {
+    			Paint paint = new Paint();
+    			paint.setARGB(255, 255, 255, 255);
+    			canvas.drawText(perc, this.getWidth()/18, 50, paint);
+    		}
+    	}
+    	private void displayTime(Canvas canvas, String time) {
+    		if (canvas != null && time != null) {
+    			Paint paint = new Paint();
+    			paint.setARGB(255, 255, 255, 255);
+    			canvas.drawText(time, this.getWidth() - 100, 6*height/7-100, paint);
+    		}
+    	}
+    	private void displayLevel(Canvas canvas, String level) {
+    		if (canvas != null && level != null) {
+    			Paint paint = new Paint();
+    			paint.setARGB(255, 255, 255, 255);
+    			canvas.drawText(level, this.getWidth()/18, 6*height/7-100, paint);
+    		}
+    	}
+        
         
 }
