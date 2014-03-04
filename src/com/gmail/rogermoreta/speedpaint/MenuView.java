@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -22,7 +21,11 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
         Paint p;
         int width;
         int height;
-        private Bitmap scaled;
+        private Bitmap bg;
+        private Bitmap jugar;
+        private Bitmap jugara;
+        private Bitmap puntos;
+        private Bitmap puntosa;
         
         public MenuView(Context context) {
             super(context);
@@ -35,7 +38,15 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
                 this.height = height;
                 getHolder().addCallback(this);
                 Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.menut);
-                scaled = Bitmap.createScaledBitmap(background, width, height, true);
+                bg = Bitmap.createScaledBitmap(background, width, height, true);
+                background = BitmapFactory.decodeResource(getResources(), R.drawable.botonjugar);
+                jugar = Bitmap.createScaledBitmap(background, width/2, height/7, true);
+                background = BitmapFactory.decodeResource(getResources(), R.drawable.botonjugara);
+                jugara = Bitmap.createScaledBitmap(background, width/2, height/7, true);
+                background = BitmapFactory.decodeResource(getResources(), R.drawable.botonpuntos);
+                puntos = Bitmap.createScaledBitmap(background, width/2, height/7, true);
+                background = BitmapFactory.decodeResource(getResources(), R.drawable.botonpuntosa);
+                puntosa = Bitmap.createScaledBitmap(background, width/2, height/7, true);
         }
 
         @Override
@@ -73,7 +84,7 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
                 p.setAntiAlias(true);
                 
                 //canvas.drawColor(Color.WHITE);
-                canvas.drawBitmap(scaled, 0, 0, null);
+                canvas.drawBitmap(bg, 0, 0, null);
                 /*for(Figura f : figuras) {
                     if(f instanceof Circulo) {
                             Circulo c = (Circulo) f;
@@ -89,16 +100,17 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
                 for (int i = 0; i < figuras.size(); ++i)
                 {
                 	Figura f = figuras.get(i);
-                	if(f instanceof Circulo) {
-                         Circulo c = (Circulo) f;
-                         if (figuras.get(i).getId() == figuraActiva) p.setColor(Color.YELLOW);
-                         else p.setColor(Color.BLACK);
-                         canvas.drawCircle(c.getX(), c.getY(), c.getRadio(), p);
-                	} else {        // in this context, only instanceof Rectangulo
-                         Rectangulo r = (Rectangulo) f;
-                         if (figuras.get(i).getId() == figuraActiva) p.setColor(Color.YELLOW);
-                         else p.setColor(Color.BLACK);
-                         canvas.drawRect(r.getX(), r.getY(), r.getX()+r.getAncho(), r.getY()+r.getAlto(), p);
+                	if (f.getId() == 1) {
+	                    if (f.getId() == figuraActiva) 
+	                        canvas.drawBitmap(jugara, width/4, 3*height/7, null);
+	                    else 
+	                    	canvas.drawBitmap(jugar, width/4, 3*height/7, null);
+                	}
+                	if (f.getId() == 2) {
+	                    if (f.getId() == figuraActiva) 
+	                        canvas.drawBitmap(puntosa, width/4, 5*height/7, null);
+	                    else 
+	                    	canvas.drawBitmap(puntos, width/4, 5*height/7, null);
                 	}
                 }
         }

@@ -10,7 +10,7 @@ import android.content.Intent;
 
 public class SplashScreenActivity extends Activity {
 
-  private long splashDelay = 5000; //5 segundos
+  private long splashDelay = 3000; //5 segundos
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

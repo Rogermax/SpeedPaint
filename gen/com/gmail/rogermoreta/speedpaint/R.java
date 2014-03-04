@@ -27,9 +27,11 @@ public final class R {
         public static final int botonpuntos=0x7f020003;
         public static final int botonpuntosa=0x7f020004;
         public static final int bubble=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int menu=0x7f020007;
-        public static final int menut=0x7f020008;
+        public static final int fondo_lienzo_pantallas_castellano=0x7f020006;
+        public static final int fondo_pantallas_castellano=0x7f020007;
+        public static final int ic_launcher=0x7f020008;
+        public static final int menu=0x7f020009;
+        public static final int menut=0x7f02000a;
     }
     public static final class id {
         public static final int action_settings=0x7f080000;
