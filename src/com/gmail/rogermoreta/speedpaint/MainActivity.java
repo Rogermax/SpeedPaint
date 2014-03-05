@@ -1,11 +1,11 @@
 package com.gmail.rogermoreta.speedpaint;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class MainActivity extends Activity {
+public class MainActivity  extends BaseGameActivity
+implements View.OnClickListener {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
