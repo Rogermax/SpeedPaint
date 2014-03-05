@@ -1,6 +1,5 @@
 package com.gmail.rogermoreta.speedpaint;
 
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -49,6 +48,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	boolean[][] mask_paint;
 	boolean clickan;
 	private Paint circlePaint;
+	@SuppressWarnings("unused")
 	private Path circlePath;
 	private int pixels;
 	private int total_pixels;

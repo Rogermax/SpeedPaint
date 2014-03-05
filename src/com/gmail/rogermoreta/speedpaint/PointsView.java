@@ -16,6 +16,7 @@ public class PointsView extends SurfaceView implements SurfaceHolder.Callback {
 	int height;
 	int best;
 	// para los FPS
+	@SuppressWarnings("unused")
 	private String avgFps;
 
 	public void setAvgFps(String avgFps) {

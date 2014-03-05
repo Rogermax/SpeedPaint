@@ -25,7 +25,7 @@ public class SplashScreenActivity extends Activity {
 			@Override
 			public void run() {
 				Intent mainIntent = new Intent().setClass(
-						SplashScreenActivity.this, Menu.class);
+						SplashScreenActivity.this, MainActivity.class);
 				startActivity(mainIntent);
 				finish();// Destruimos esta activity para prevenit que el
 							// usuario retorne aqui presionando el boton Atras.
