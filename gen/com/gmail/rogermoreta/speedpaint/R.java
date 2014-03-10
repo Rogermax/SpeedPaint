@@ -231,14 +231,16 @@ containing a value of this type.
         public static final int menut=0x7f020026;
     }
     public static final class id {
-        public static final int action_settings=0x7f050007;
+        public static final int action_settings=0x7f050009;
+        public static final int button1=0x7f050007;
         public static final int hybrid=0x7f050004;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int satellite=0x7f050002;
-        public static final int sign_in_button=0x7f050005;
-        public static final int sign_out_button=0x7f050006;
+        public static final int sign_in_button=0x7f050006;
+        public static final int sign_out_button=0x7f050008;
         public static final int terrain=0x7f050003;
+        public static final int textView1=0x7f050005;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
@@ -250,6 +252,11 @@ containing a value of this type.
         public static final int main=0x7f0a0000;
     }
     public static final class string {
+        public static final int achievement_level_10_in_resistance=0x7f060026;
+        public static final int achievement_level_1_in_10_mode=0x7f060022;
+        public static final int achievement_level_1_in_resistance=0x7f060024;
+        public static final int achievement_level_5_in_10_mode=0x7f060023;
+        public static final int achievement_level_5_in_resistance=0x7f060025;
         public static final int action_settings=0x7f06001f;
         public static final int app_id=0x7f060021;
         public static final int app_name=0x7f06001e;
@@ -351,6 +358,8 @@ containing a value of this type.
         public static final int gamehelper_license_failed=0x7f06001c;
         public static final int gamehelper_sign_in_failed=0x7f06001a;
         public static final int gamehelper_unknown_error=0x7f06001d;
+        public static final int leaderboard_ranking=0x7f060027;
+        public static final int ranking=0x7f060028;
         public static final int sharedPoints=0x7f060020;
     }
     public static final class style {

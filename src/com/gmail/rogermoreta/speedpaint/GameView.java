@@ -427,7 +427,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				editor.putInt("puntos_normal_aux", 
 						Math.max(sharedPref.getInt("puntos_normal_aux", 0), (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels)))
 						);
+				editor.putBoolean("puntos_normal_bool", 
+						false);
 				editor.commit();
+				//Games.Leaderboards.submitScore(getApiClient(), "CgkIpbKptu8KEAIQAA", (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels)));
 				((Activity) getContext()).finish();
 				// Log.i("GameView", "Partida al: "+pixels*100/total_pixels);
 			}

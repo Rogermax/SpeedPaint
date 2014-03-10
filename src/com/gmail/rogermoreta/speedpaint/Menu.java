@@ -23,4 +23,6 @@ public class Menu extends Activity {
 		display.getSize(size);
 		setContentView(new MenuView(this, size.x, size.y));
 	}
+
+
 }
