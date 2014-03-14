@@ -8,6 +8,11 @@
         android:minSdkVersion="13"
         android:targetSdkVersion="18" />
 
+    <!-- Used to request banner and interstitial ads. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Used to avoid sending an ad request if there is no connectivity. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -43,6 +48,12 @@
             >
         </activity>
         <activity
+            android:name="com.gmail.rogermoreta.speedpaint.Logros"
+			android:screenOrientation="portrait"
+			android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
+        <activity
             android:name="com.gmail.rogermoreta.speedpaint.SplashScreenActivity"
 			android:screenOrientation="portrait"
 			android:configChanges="keyboardHidden|orientation|screenSize"
@@ -52,6 +63,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+         <!-- Activity required to show ad overlays. -->
+        <activity android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
     </application>
 
 </manifest>

@@ -2,6 +2,9 @@ package com.gmail.rogermoreta.speedpaint;
 
 import java.util.ArrayList;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,7 +27,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private GameThread thread;
 	Paint p;
 	private long beginTime;
+	private long tiempo_parpadeo;
+	private long tiempo_finpartida;
 
+
+	private InterstitialAd interstitial;
+	
+	
 	// para los FPS
 	private String avgFps;
 
@@ -43,27 +52,67 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private Pair<Integer, Integer> lastPair = null;
 	private Bitmap lienzoBg;
 	private Bitmap lienzo;
+	private Bitmap porcentaje;
+	private Bitmap fintiempo;
 	private Bitmap bg;
+	private Bitmap instruc;
+	private Bitmap instruc2;
+	private Bitmap resultado;
+	private Bitmap cero;
+	private Bitmap uno;
+	private Bitmap dos;
+	private Bitmap tres;
+	private Bitmap cuatro;
+	private Bitmap cinco;
+	private Bitmap seis;
+	private Bitmap siete;
+	private Bitmap ocho;
+	private Bitmap nueve;
+	private Bitmap boton;
+	private Bitmap botona;
 	ArrayList<Pair<Integer, Integer>> cola_click;
-	boolean[][] mask_paint;
-	boolean clickan;
+	private boolean[][] mask_paint;
+	private boolean clickan;
+	private boolean fin_partida = false;
+	private boolean cambio = false;
 	private Paint circlePaint;
 	@SuppressWarnings("unused")
 	private Path circlePath;
 	private int pixels;
 	private int total_pixels;
+	private Rectangulo r;
+	private int offset;
+	private boolean apretado = false;
+	private boolean resistencia = true;
+	private boolean fin_finpartida = false;
+
+	private long tiempo_regeneracion;
 
 	public GameView(Context context) {
 		super(context);
 	}
 
-	public GameView(Context context, int width, int height) {
+	public GameView(Context context, int width, int height, long tiempo) {
 		super(context);
 		getHolder().addCallback(this);
 		thread = new GameThread(getHolder(), this, width, height);
 		setFocusable(true);
 
+		if (tiempo < 100) resistencia = false;
+		 // Create the interstitial.
+	    interstitial = new InterstitialAd((Activity) getContext());
+	    interstitial.setAdUnitId("ca-app-pub-4637004186333767/4804739134");
+
+	    // Create ad request.
+	    AdRequest adRequest = new AdRequest.Builder().build();
+	    tiempo_parpadeo = System.currentTimeMillis();
+	    // Begin loading your interstitial.
+	    interstitial.loadAd(adRequest);
+	    offset = -height /48;
+		r = new Rectangulo(1, width / 3, 6 * height / 7+offset, width / 3+width/45,
+				height / 8);
 		// CACA
+		tiempo_regeneracion = tiempo;
 		total_pixels = 10 * width * 213 * height / 11 / 280;
 		pixels = 0;
 		cola_click = new ArrayList<Pair<Integer, Integer>>();
@@ -81,8 +130,62 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				R.drawable.fondo_pantallas_castellano);
 		bg = Bitmap.createScaledBitmap(background, width, height, true);
 		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.boton);
+		boton = Bitmap.createScaledBitmap(background, width / 3, height / 8, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.botona);
+		botona = Bitmap.createScaledBitmap(background, width / 3, height / 8,
+				true);
+		background = BitmapFactory.decodeResource(getResources(),
 				R.drawable.fondo_lienzo_pantallas_castellano);
 		lienzoBg = Bitmap.createScaledBitmap(background, width, height, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.instruc);
+		instruc = Bitmap.createScaledBitmap(background, width, height, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.instruc2);
+		instruc2 = Bitmap.createScaledBitmap(background, width, height, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.puntos);
+		resultado = Bitmap.createScaledBitmap(background, width, height, true);
+		int ancho_digito = width/12;
+		int alto_digito = height/10;
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.cero);
+		cero = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.uno);
+		uno = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.dos);
+		dos = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.tres);
+		tres = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.cuatro);
+		cuatro = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.cinco);
+		cinco = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.seis);
+		seis = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.siete);
+		siete = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.ocho);
+		ocho = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.nueve);
+		nueve = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.porcentaje);
+		porcentaje = Bitmap.createScaledBitmap(background, ancho_digito, alto_digito, true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.fintiempo);
+		fintiempo = Bitmap.createScaledBitmap(background, width, height, true);
 		int margenx = width / 22;
 		int margeny = height / 40;
 		for (int i = margeny; i < 11 * height / 14; ++i) {
@@ -136,8 +239,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_DOWN:
 			if (partida_ON)
 				lastPair = aux;
+			if (fin_finpartida) {
+				int x = (int) event.getX();
+				int y = (int) event.getY();
+				if (x > r.getX() && x < r.getX() + r.getAncho()
+						&& y > r.getY() && y < r.getY() + r.getAlto()) {
+					apretado = true;
+				}
+			}
 			break;
 		case MotionEvent.ACTION_MOVE:
+			apretado = false;
+			if (fin_finpartida) {
+				int x = (int) event.getX();
+				int y = (int) event.getY();
+				if (x > r.getX() && x < r.getX() + r.getAncho()
+						&& y > r.getY() && y < r.getY() + r.getAlto()) {
+					apretado = true;
+				}
+			}			
 			if (partida_ON)
 				cola_click.add(aux);
 			break;
@@ -146,6 +266,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				beginTime = System.currentTimeMillis();
 				partida_ON = true;
 			}
+			if (fin_finpartida && apretado) {
+				fin();
+			}
+			apretado = false;
 			break;
 		default:
 			return false;
@@ -168,26 +292,87 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		 */
 
 		canvas.drawBitmap(lienzoBg, 0, 0, null);
-		if (partida_ON)
+		if (partida_ON && !fin_partida)
 			canvas.drawBitmap(lienzo, 0, 0, null);
 		canvas.drawBitmap(bg, 0, 0, null);
-		if (!partida_ON)
-			canvas.drawColor(0x88888888);
+		if (!partida_ON) {
+			if (cambio) canvas.drawBitmap(instruc2, 0, 0, null);
+			else canvas.drawBitmap(instruc, 0, 0, null);
+		}
+			
 
 		if (partida_ON) {
 			displayTime(
 					canvas,
-					""
-							+ (10 * 1000 - time_milis)
+							(10 * 1000 - time_milis)
 							/ 1000
-							+ ":"
-							+ ((10 * 1000 - time_milis) - ((10 * 1000 - time_milis) / 1000) * 1000)
+							,
+							((10 * 1000 - time_milis) - ((10 * 1000 - time_milis) / 1000) * 1000)
 							/ 10);
 			displayPercentage(canvas, "" + pixels * 100 / total_pixels + "%");
 			displayLevel(canvas, "level: " + level);
 		}
+		if (fin_partida) {
+			if (!fin_finpartida) canvas.drawBitmap(fintiempo, 0, 0, null);
+			else {
+				canvas.drawBitmap(resultado, 0, 0, null);
+				if (apretado) canvas.drawBitmap(botona, width / 3 + width/45, 6 * height / 7 + offset, null);
+				else canvas.drawBitmap(boton, width / 3 + width/45, 6 * height / 7 + offset, null);
+				pinta_level(canvas);
+				pinta_porcentaje(canvas);
+				pinta_puntos(canvas);
+			}
+		}
 		displayFps(canvas, avgFps);
 	}
+
+	private void pinta_level(Canvas canvas) {
+		int dig1 = (int) (level/100);
+		int dig2 = (int) ((level-(dig1)*100)/10);
+		int dig3 = (int) (level-dig1*100-dig2*10);
+		int posx = 7*width/20;
+		int posy = 4*height/32;
+		dibuja_digito(canvas, dig1,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, dig2,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, dig3,posx,posy);
+	}
+
+	private void pinta_porcentaje(Canvas canvas) {
+		int px = pixels*100/total_pixels;
+		int dig1 = (int) (px/100);
+		int dig2 = (int) ((px-(dig1)*100)/10);
+		int dig3 = (int) (px-dig1*100-dig2*10);
+		int posx = 16*width/40;
+		int posy = 51*height/128;
+		dibuja_digito(canvas, dig2,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, dig3,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, 10,posx,posy);
+	}
+	
+	private void pinta_puntos(Canvas canvas) {
+		int puntos = (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels));
+		int dig1 = (int) (puntos/10000);
+		int dig2 = (int) ((puntos-dig1*10000)/1000);
+		int dig3 = (int) ((puntos-dig1*10000-dig2*1000)/100);
+		int dig4 = (int) ((puntos-dig1*10000-dig2*1000-dig3*100)/10);
+		int dig5 = (int) (puntos-dig1*10000-dig2*1000-dig3*100-dig4*10);
+		int posx = 6*width/20;
+		int posy = 21*height/32;
+		dibuja_digito(canvas, dig1,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, dig2,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, dig3,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, dig4,posx,posy);
+		posx += width/10;
+		dibuja_digito(canvas, dig5,posx,posy);
+	}
+	
 
 	/**
 	 * This is the game update method. It iterates through all the objects and
@@ -195,247 +380,268 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	 * update method.
 	 */
 	public void update() {
-		int ancho_pinzel = 10 * width / 110;
-		int alto_pinzel = 213 * width / 2800;
-
-		if (partida_ON) {
-
-			for (int ii = 0; ii < cola_click.size(); ++ii) {
-
-				// pintar cuadrado
-				// Log.i(TAG,"level<<24: "+Integer.toHexString(level<<24));
-				// int pintura = (103409*level+36469)%0x00ffffff;
-				int color = 0x88000000 | (0x000000ff << level);
-				int x = lastPair.first;
-				int y = lastPair.second;
-				for (int i = x - ancho_pinzel / 2; i < x + ancho_pinzel / 2; ++i) {
-					for (int j = y - alto_pinzel / 2; j < y + alto_pinzel / 2; ++j) {
-						// Log.i("GameView", "i: "+i+"\nj: "+j);
-						if (i > width / 22 && i < 21 * width / 22
-								&& j >= height / 40 && j < 11 * height / 14
-								&& !mask_paint[i][j]) {
-							mask_paint[i][j] = true;
-							pixels++;
-							lienzo.setPixel(i, j, color);
+		if (!fin_partida) {
+			int ancho_pinzel = 10 * width / 110;
+			int alto_pinzel = 213 * width / 2800;
+	
+			if (partida_ON) {
+	
+				for (int ii = 0; ii < cola_click.size(); ++ii) {
+	
+					// pintar cuadrado
+					// Log.i(TAG,"level<<24: "+Integer.toHexString(level<<24));
+					// int pintura = (103409*level+36469)%0x00ffffff;
+					int color = 0x88000000 | (0x000000ff << level);
+					int x = lastPair.first;
+					int y = lastPair.second;
+					for (int i = x - ancho_pinzel / 2; i < x + ancho_pinzel / 2; ++i) {
+						for (int j = y - alto_pinzel / 2; j < y + alto_pinzel / 2; ++j) {
+							// Log.i("GameView", "i: "+i+"\nj: "+j);
+							if (i > width / 22 && i < 21 * width / 22
+									&& j >= height / 40 && j < 11 * height / 14
+									&& !mask_paint[i][j]) {
+								mask_paint[i][j] = true;
+								pixels++;
+								lienzo.setPixel(i, j, color);
+							}
 						}
 					}
+					// escoger pasos y esquina
+					int pasos = Math.max(
+							Math.abs(lastPair.first - cola_click.get(ii).first),
+							Math.abs(lastPair.second - cola_click.get(ii).second));
+					if (lastPair.first > cola_click.get(ii).first) {
+						if (lastPair.second > cola_click.get(ii).second) {// esquina
+																			// buena
+																			// es la
+																			// inversa
+																			// (negativa,
+																			// negativa)
+																			// Log.i(TAG,
+																			// "Ha elegido ir para arriba, izquierda");
+							for (int i2 = 0; i2 < pasos; ++i2) {
+								int i = x
+										- ancho_pinzel
+										/ 2
+										- Math.round(Math.abs(lastPair.first
+												- cola_click.get(ii).first)
+												* (i2 + 1) / pasos);
+								int j = y
+										- alto_pinzel
+										/ 2
+										- Math.round(Math.abs(lastPair.second
+												- cola_click.get(ii).second)
+												* (i2 + 1) / pasos);
+								for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
+									if (i + j2 > width / 22
+											&& i + j2 < 21 * width / 22
+											&& j >= height / 40
+											&& j < 11 * height / 14
+											&& !mask_paint[i + j2][j]) {
+										mask_paint[i + j2][j] = true;
+										pixels++;
+										lienzo.setPixel(i + j2, j, color);
+									}
+								}
+								for (int j2 = 0; j2 < alto_pinzel; ++j2) {
+									if (i > width / 22 && i < 21 * width / 22
+											&& j + j2 >= height / 40
+											&& j + j2 < 11 * height / 14
+											&& !mask_paint[i][j + j2]) {
+										mask_paint[i][j + j2] = true;
+										pixels++;
+										lienzo.setPixel(i, j + j2, color);
+									}
+								}
+							}
+						} else if (lastPair.second < cola_click.get(ii).second) {// esquina
+																					// buena
+																					// es
+																					// la
+																					// inversa
+																					// (negativa,
+																					// positiva)
+							for (int i2 = 0; i2 < pasos; ++i2) {
+								// Log.i(TAG,
+								// "Ha elegido ir para abajo, izquierda");
+								int i = x
+										- ancho_pinzel
+										/ 2
+										- Math.round(Math.abs(lastPair.first
+												- cola_click.get(ii).first)
+												* (i2 + 1) / pasos);
+								int j = y
+										+ alto_pinzel
+										/ 2
+										+ Math.round(Math.abs(lastPair.second
+												- cola_click.get(ii).second)
+												* (i2 + 1) / pasos);
+								for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
+									if (i + j2 > width / 22
+											&& i + j2 < 21 * width / 22
+											&& j >= height / 40
+											&& j < 11 * height / 14
+											&& !mask_paint[i + j2][j]) {
+										mask_paint[i + j2][j] = true;
+										pixels++;
+										lienzo.setPixel(i + j2, j, color);
+									}
+								}
+								for (int j2 = 0; j2 < alto_pinzel; ++j2) {
+									if (i > width / 22 && i < 21 * width / 22
+											&& j - j2 >= height / 40
+											&& j - j2 < 11 * height / 14
+											&& !mask_paint[i][j - j2]) {
+										mask_paint[i][j - j2] = true;
+										pixels++;
+										lienzo.setPixel(i, j - j2, color);
+									}
+								}
+							}
+						}
+					} else if (lastPair.first < cola_click.get(ii).first) {
+						if (lastPair.second > cola_click.get(ii).second) {// esquina
+																			// buena
+																			// es la
+																			// inversa
+																			// (positiva,
+																			// negativa)
+							for (int i2 = 0; i2 < pasos; ++i2) {
+								// Log.i(TAG, "Ha elegido ir para arriba, derecha");
+								int i = x
+										+ ancho_pinzel
+										/ 2
+										+ Math.round(Math.abs(lastPair.first
+												- cola_click.get(ii).first)
+												* (i2 + 1) / pasos);
+								int j = y
+										- alto_pinzel
+										/ 2
+										- Math.round(Math.abs(lastPair.second
+												- cola_click.get(ii).second)
+												* (i2 + 1) / pasos);
+								for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
+									if (i - j2 > width / 22
+											&& i - j2 < 21 * width / 22
+											&& j >= height / 40
+											&& j < 11 * height / 14
+											&& !mask_paint[i - j2][j]) {
+										mask_paint[i - j2][j] = true;
+										pixels++;
+										lienzo.setPixel(i - j2, j, color);
+									}
+								}
+								for (int j2 = 0; j2 < alto_pinzel; ++j2) {
+									if (i > width / 22 && i < 21 * width / 22
+											&& j + j2 >= height / 40
+											&& j + j2 < 11 * height / 14
+											&& !mask_paint[i][j + j2]) {
+										mask_paint[i][j + j2] = true;
+										pixels++;
+										lienzo.setPixel(i, j + j2, color);
+									}
+								}
+							}
+	
+						} else if (lastPair.second < cola_click.get(ii).second) {// esquina
+																					// buena
+																					// es
+																					// la
+																					// inversa
+																					// (positiva,
+																					// positiva)
+							for (int i2 = 0; i2 < pasos; ++i2) {
+								// Log.i(TAG, "Ha elegido ir para abajo, derecha");
+								int i = x
+										+ ancho_pinzel
+										/ 2
+										+ Math.round(Math.abs(lastPair.first
+												- cola_click.get(ii).first)
+												* (i2 + 1) / pasos);
+								int j = y
+										+ alto_pinzel
+										/ 2
+										+ Math.round(Math.abs(lastPair.second
+												- cola_click.get(ii).second)
+												* (i2 + 1) / pasos);
+								for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
+									if (i - j2 > width / 22
+											&& i - j2 < 21 * width / 22
+											&& j >= height / 40
+											&& j < 11 * height / 14
+											&& !mask_paint[i - j2][j]) {
+										mask_paint[i - j2][j] = true;
+										pixels++;
+										lienzo.setPixel(i - j2, j, color);
+									}
+								}
+								for (int j2 = 0; j2 < alto_pinzel; ++j2) {
+									if (i > width / 22 && i < 21 * width / 22
+											&& j - j2 >= height / 40
+											&& j - j2 < 11 * height / 14
+											&& !mask_paint[i][j - j2]) {
+										mask_paint[i][j - j2] = true;
+										pixels++;
+										lienzo.setPixel(i, j - j2, color);
+									}
+								}
+							}
+						}
+					}
+					lastPair = new Pair<Integer, Integer>(cola_click.get(ii).first,
+							cola_click.get(ii).second);
+	
 				}
-				// escoger pasos y esquina
-				int pasos = Math.max(
-						Math.abs(lastPair.first - cola_click.get(ii).first),
-						Math.abs(lastPair.second - cola_click.get(ii).second));
-				if (lastPair.first > cola_click.get(ii).first) {
-					if (lastPair.second > cola_click.get(ii).second) {// esquina
-																		// buena
-																		// es la
-																		// inversa
-																		// (negativa,
-																		// negativa)
-																		// Log.i(TAG,
-																		// "Ha elegido ir para arriba, izquierda");
-						for (int i2 = 0; i2 < pasos; ++i2) {
-							int i = x
-									- ancho_pinzel
-									/ 2
-									- Math.round(Math.abs(lastPair.first
-											- cola_click.get(ii).first)
-											* (i2 + 1) / pasos);
-							int j = y
-									- alto_pinzel
-									/ 2
-									- Math.round(Math.abs(lastPair.second
-											- cola_click.get(ii).second)
-											* (i2 + 1) / pasos);
-							for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
-								if (i + j2 > width / 22
-										&& i + j2 < 21 * width / 22
-										&& j >= height / 40
-										&& j < 11 * height / 14
-										&& !mask_paint[i + j2][j]) {
-									mask_paint[i + j2][j] = true;
-									pixels++;
-									lienzo.setPixel(i + j2, j, color);
-								}
-							}
-							for (int j2 = 0; j2 < alto_pinzel; ++j2) {
-								if (i > width / 22 && i < 21 * width / 22
-										&& j + j2 >= height / 40
-										&& j + j2 < 11 * height / 14
-										&& !mask_paint[i][j + j2]) {
-									mask_paint[i][j + j2] = true;
-									pixels++;
-									lienzo.setPixel(i, j + j2, color);
-								}
-							}
-						}
-					} else if (lastPair.second < cola_click.get(ii).second) {// esquina
-																				// buena
-																				// es
-																				// la
-																				// inversa
-																				// (negativa,
-																				// positiva)
-						for (int i2 = 0; i2 < pasos; ++i2) {
-							// Log.i(TAG,
-							// "Ha elegido ir para abajo, izquierda");
-							int i = x
-									- ancho_pinzel
-									/ 2
-									- Math.round(Math.abs(lastPair.first
-											- cola_click.get(ii).first)
-											* (i2 + 1) / pasos);
-							int j = y
-									+ alto_pinzel
-									/ 2
-									+ Math.round(Math.abs(lastPair.second
-											- cola_click.get(ii).second)
-											* (i2 + 1) / pasos);
-							for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
-								if (i + j2 > width / 22
-										&& i + j2 < 21 * width / 22
-										&& j >= height / 40
-										&& j < 11 * height / 14
-										&& !mask_paint[i + j2][j]) {
-									mask_paint[i + j2][j] = true;
-									pixels++;
-									lienzo.setPixel(i + j2, j, color);
-								}
-							}
-							for (int j2 = 0; j2 < alto_pinzel; ++j2) {
-								if (i > width / 22 && i < 21 * width / 22
-										&& j - j2 >= height / 40
-										&& j - j2 < 11 * height / 14
-										&& !mask_paint[i][j - j2]) {
-									mask_paint[i][j - j2] = true;
-									pixels++;
-									lienzo.setPixel(i, j - j2, color);
-								}
-							}
-						}
-					}
-				} else if (lastPair.first < cola_click.get(ii).first) {
-					if (lastPair.second > cola_click.get(ii).second) {// esquina
-																		// buena
-																		// es la
-																		// inversa
-																		// (positiva,
-																		// negativa)
-						for (int i2 = 0; i2 < pasos; ++i2) {
-							// Log.i(TAG, "Ha elegido ir para arriba, derecha");
-							int i = x
-									+ ancho_pinzel
-									/ 2
-									+ Math.round(Math.abs(lastPair.first
-											- cola_click.get(ii).first)
-											* (i2 + 1) / pasos);
-							int j = y
-									- alto_pinzel
-									/ 2
-									- Math.round(Math.abs(lastPair.second
-											- cola_click.get(ii).second)
-											* (i2 + 1) / pasos);
-							for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
-								if (i - j2 > width / 22
-										&& i - j2 < 21 * width / 22
-										&& j >= height / 40
-										&& j < 11 * height / 14
-										&& !mask_paint[i - j2][j]) {
-									mask_paint[i - j2][j] = true;
-									pixels++;
-									lienzo.setPixel(i - j2, j, color);
-								}
-							}
-							for (int j2 = 0; j2 < alto_pinzel; ++j2) {
-								if (i > width / 22 && i < 21 * width / 22
-										&& j + j2 >= height / 40
-										&& j + j2 < 11 * height / 14
-										&& !mask_paint[i][j + j2]) {
-									mask_paint[i][j + j2] = true;
-									pixels++;
-									lienzo.setPixel(i, j + j2, color);
-								}
-							}
-						}
-
-					} else if (lastPair.second < cola_click.get(ii).second) {// esquina
-																				// buena
-																				// es
-																				// la
-																				// inversa
-																				// (positiva,
-																				// positiva)
-						for (int i2 = 0; i2 < pasos; ++i2) {
-							// Log.i(TAG, "Ha elegido ir para abajo, derecha");
-							int i = x
-									+ ancho_pinzel
-									/ 2
-									+ Math.round(Math.abs(lastPair.first
-											- cola_click.get(ii).first)
-											* (i2 + 1) / pasos);
-							int j = y
-									+ alto_pinzel
-									/ 2
-									+ Math.round(Math.abs(lastPair.second
-											- cola_click.get(ii).second)
-											* (i2 + 1) / pasos);
-							for (int j2 = 0; j2 < ancho_pinzel; ++j2) {
-								if (i - j2 > width / 22
-										&& i - j2 < 21 * width / 22
-										&& j >= height / 40
-										&& j < 11 * height / 14
-										&& !mask_paint[i - j2][j]) {
-									mask_paint[i - j2][j] = true;
-									pixels++;
-									lienzo.setPixel(i - j2, j, color);
-								}
-							}
-							for (int j2 = 0; j2 < alto_pinzel; ++j2) {
-								if (i > width / 22 && i < 21 * width / 22
-										&& j - j2 >= height / 40
-										&& j - j2 < 11 * height / 14
-										&& !mask_paint[i][j - j2]) {
-									mask_paint[i][j - j2] = true;
-									pixels++;
-									lienzo.setPixel(i, j - j2, color);
-								}
-							}
-						}
-					}
+				cola_click = new ArrayList<Pair<Integer, Integer>>();
+				if (pixels >= 0.9 * total_pixels) {
+					pixels = 0;
+					lienzo = Bitmap.createBitmap(width, 6 * height / 7,
+							Bitmap.Config.ARGB_8888);
+					mask_paint = new boolean[width][height];
+					beginTime = Math.min(System.currentTimeMillis(), beginTime
+							+ tiempo_regeneracion);
+					level++;
 				}
-				lastPair = new Pair<Integer, Integer>(cola_click.get(ii).first,
-						cola_click.get(ii).second);
-
+				time_milis = System.currentTimeMillis() - beginTime;
+				if (time_milis > 10 * 1000 || level > 999) {
+					time_milis = 10000;
+					tiempo_finpartida = System.currentTimeMillis();
+					fin_partida = true;
+					guardar_puntos();
+					//Games.Leaderboards.submitScore(getApiClient(), "CgkIpbKptu8KEAIQAA", (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels)));
+					
+					// Log.i("GameView", "Partida al: "+pixels*100/total_pixels);
+				}
 			}
-			cola_click = new ArrayList<Pair<Integer, Integer>>();
-			if (pixels >= 0.9 * total_pixels) {
-				pixels = 0;
-				lienzo = Bitmap.createBitmap(width, 6 * height / 7,
-						Bitmap.Config.ARGB_8888);
-				mask_paint = new boolean[width][height];
-				int tiempo_regeneracion = 3000;
-				beginTime = Math.min(System.currentTimeMillis(), beginTime
-						+ tiempo_regeneracion);
-				level++;
+			else {
+				if (System.currentTimeMillis() - tiempo_parpadeo > 500)
+				{
+					tiempo_parpadeo = System.currentTimeMillis();
+					cambio = !cambio;
+				}
 			}
-			time_milis = System.currentTimeMillis() - beginTime;
-			if (time_milis > 10 * 1000) {
-				SharedPreferences sharedPref = getContext()
-						.getSharedPreferences(
-								getContext().getString(R.string.sharedPoints),
-								Context.MODE_PRIVATE);
-				SharedPreferences.Editor editor = sharedPref.edit();
-				editor.putInt("puntos_normal_aux", 
-						Math.max(sharedPref.getInt("puntos_normal_aux", 0), (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels)))
-						);
-				editor.putBoolean("puntos_normal_bool", 
-						false);
-				editor.commit();
-				//Games.Leaderboards.submitScore(getApiClient(), "CgkIpbKptu8KEAIQAA", (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels)));
-				((Activity) getContext()).finish();
-				// Log.i("GameView", "Partida al: "+pixels*100/total_pixels);
+		}
+		else {
+			if (!fin_finpartida && System.currentTimeMillis() - tiempo_finpartida > 2000)
+			{
+				fin_finpartida = true;
 			}
 		}
 
+	}
+
+	private void guardar_puntos() {
+		SharedPreferences sharedPref = getContext()
+				.getSharedPreferences(
+						getContext().getString(R.string.sharedPoints),
+						Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putInt("puntos_normal_aux", 
+				Math.max(sharedPref.getInt("puntos_normal_aux", 0), (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels)))
+				);
+		editor.putBoolean("puntos_normal_bool", 
+				false);
+		editor.commit();
 	}
 
 	private void displayFps(Canvas canvas, String fps) {
@@ -454,12 +660,61 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 
-	private void displayTime(Canvas canvas, String time) {
-		if (canvas != null && time != null) {
-			Paint paint = new Paint();
-			paint.setARGB(255, 255, 255, 255);
-			canvas.drawText(time, this.getWidth() - 100, 6 * height / 7 - 100,
-					paint);
+	private void displayTime(Canvas canvas, long sec, long cent) {
+		int dig1 = (int) (sec/10);
+		int dig2 = (int) (sec-(sec/10)*10);
+		int dig3 = (int) (cent/10);
+		int dig4 = (int) (cent-(cent/10)*10);
+		int posx = 6*width/44;
+		int posy = 41*height/48;
+		dibuja_digito(canvas, dig1,posx,posy);
+		posx += width/12;
+		dibuja_digito(canvas, dig2,posx,posy);
+		posx += width/8;
+		dibuja_digito(canvas, dig3,posx,posy);
+		posx += width/12;
+		dibuja_digito(canvas, dig4,posx,posy);
+	}
+	
+	private void dibuja_digito(Canvas canvas, int dig1, int posx, int posy) {
+		if (canvas != null) {
+			switch (dig1) {
+				case 0:
+					canvas.drawBitmap(cero, posx, posy, null);
+				break;
+				case 1:
+					canvas.drawBitmap(uno, posx, posy, null);
+				break;
+				case 2:
+					canvas.drawBitmap(dos, posx, posy, null);
+				break;
+				case 3:
+					canvas.drawBitmap(tres, posx, posy, null);
+				break;
+				case 4:
+					canvas.drawBitmap(cuatro, posx, posy, null);
+				break;
+				case 5:
+					canvas.drawBitmap(cinco, posx, posy, null);
+				break;
+				case 6:
+					canvas.drawBitmap(seis, posx, posy, null);
+				break;
+				case 7:
+					canvas.drawBitmap(siete, posx, posy, null);
+				break;
+				case 8:
+					canvas.drawBitmap(ocho, posx, posy, null);
+				break;
+				case 9:
+					canvas.drawBitmap(nueve, posx, posy, null);
+				break;
+				case 10:
+					canvas.drawBitmap(porcentaje, posx, posy, null);
+				break;
+				default:
+					//nunca deberia entrar
+			}
 		}
 	}
 
@@ -471,5 +726,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					paint);
 		}
 	}
+	
+	private void fin() {
+		displayInterstitial();
+		((Activity) getContext()).finish();	
+	}
 
+	// Invoke displayInterstitial() when you are ready to display an interstitial.
+	  public void displayInterstitial() {
+	    if (interstitial.isLoaded()) {
+	      interstitial.show();
+	    }
+	    else Log.i("Game","Ha fallado el isLoaded() de la publicidad.");
+	  }
 }

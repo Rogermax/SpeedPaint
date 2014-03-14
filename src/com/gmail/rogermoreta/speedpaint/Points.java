@@ -74,9 +74,10 @@ public class Points extends BaseGameActivity implements OnClickListener{
 	    }
 	    else if (view.getId() == R.id.button1) {
 
+	    	Logros_Manager LM = new Logros_Manager(this, getApiClient());
 			SharedPreferences sharedPref = getSharedPreferences(
-							getString(R.string.sharedPoints),
-							Context.MODE_PRIVATE);
+					getString(R.string.sharedPoints),
+					Context.MODE_PRIVATE);
 			int temp = sharedPref.getInt("puntos_normal_aux", 0);
 			int best = sharedPref.getInt("puntos_normal_best", 0);
 			SharedPreferences.Editor editor = sharedPref.edit();
@@ -88,15 +89,18 @@ public class Points extends BaseGameActivity implements OnClickListener{
 					Log.i("Points", "Lo va a meter en google");
 					editor.putInt("puntos_normal_best", 
 							temp);
-					Games.Leaderboards.submitScore(getApiClient(), getString(R.string.leaderboard_ranking), temp);
+					Games.Leaderboards.submitScore(getApiClient(), getString(R.string.leaderboard_10_seconds_ranking), temp);
 				}
-
+			
 				editor.commit();
 			}
-
-			startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getString(R.string.leaderboard_ranking)), 1);
+			startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getString(R.string.leaderboard_10_seconds_ranking)), 1);
 	        // show sign-in button, hide the sign-out button
 	        ((TextView) findViewById(R.id.textView1)).setText("le has dado a ranking: "+Math.max(best, temp));
 	    }
+	}
+
+	private void actualiza_logros() {
+		
 	}
 }

@@ -2,6 +2,8 @@ package com.gmail.rogermoreta.speedpaint;
 
 import java.util.ArrayList;
 
+import com.google.android.gms.games.Games;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,8 +27,14 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 	private Bitmap bg;
 	private Bitmap jugar;
 	private Bitmap jugara;
+	private Bitmap resistencia;
+	private Bitmap resistenciaa;
 	private Bitmap puntos;
 	private Bitmap puntosa;
+	private Bitmap logros;
+	private Bitmap logrosa;
+	private int offset;
+	
 
 	public MenuView(Context context) {
 		super(context);
@@ -37,6 +46,7 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 		this.width = width;
 		this.height = height;
 		getHolder().addCallback(this);
+		offset = - height / 14;
 		Bitmap background = BitmapFactory.decodeResource(getResources(),
 				R.drawable.menut);
 		bg = Bitmap.createScaledBitmap(background, width, height, true);
@@ -49,12 +59,28 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 		jugara = Bitmap.createScaledBitmap(background, width / 2, height / 7,
 				true);
 		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.botonresistencia);
+		resistencia = Bitmap.createScaledBitmap(background, width / 2, height / 7,
+				true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.botonresistenciaa);
+		resistenciaa = Bitmap.createScaledBitmap(background, width / 2, height / 7,
+				true);
+		background = BitmapFactory.decodeResource(getResources(),
 				R.drawable.botonpuntos);
 		puntos = Bitmap.createScaledBitmap(background, width / 2, height / 7,
 				true);
 		background = BitmapFactory.decodeResource(getResources(),
 				R.drawable.botonpuntosa);
 		puntosa = Bitmap.createScaledBitmap(background, width / 2, height / 7,
+				true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.botonlogros);
+		logros = Bitmap.createScaledBitmap(background, width / 2, height / 7,
+				true);
+		background = BitmapFactory.decodeResource(getResources(),
+				R.drawable.botonlogrosa);
+		logrosa = Bitmap.createScaledBitmap(background, width / 2, height / 7,
 				true);
 	}
 
@@ -66,9 +92,13 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceCreated(SurfaceHolder arg0) {
 		figuras = new ArrayList<Figura>();
-		figuras.add(new Rectangulo(1, width / 4, 3 * height / 7, width / 2,
+		figuras.add(new Rectangulo(1, width / 4, 3 * height / 7+offset, width / 2,
 				height / 7));
-		figuras.add(new Rectangulo(2, width / 4, 5 * height / 7, width / 2,
+		figuras.add(new Rectangulo(2, width / 4, 4 * height / 7+offset, width / 2,
+				height / 7));
+		figuras.add(new Rectangulo(3, width / 4, 5 * height / 7+offset, width / 2,
+				height / 7));
+		figuras.add(new Rectangulo(4, width / 4, 6 * height / 7+offset, width / 2,
 				height / 7));
 		figuraActiva = -1;
 
@@ -109,15 +139,27 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 			Figura f = figuras.get(i);
 			if (f.getId() == 1) {
 				if (f.getId() == figuraActiva)
-					canvas.drawBitmap(jugara, width / 4, 3 * height / 7, null);
+					canvas.drawBitmap(jugara, width / 4, 3 * height / 7 + offset, null);
 				else
-					canvas.drawBitmap(jugar, width / 4, 3 * height / 7, null);
+					canvas.drawBitmap(jugar, width / 4, 3 * height / 7 + offset, null);
 			}
 			if (f.getId() == 2) {
 				if (f.getId() == figuraActiva)
-					canvas.drawBitmap(puntosa, width / 4, 5 * height / 7, null);
+					canvas.drawBitmap(resistenciaa, width / 4, 4 * height / 7 + offset, null);
 				else
-					canvas.drawBitmap(puntos, width / 4, 5 * height / 7, null);
+					canvas.drawBitmap(resistencia, width / 4, 4 * height / 7 + offset, null);
+			}
+			if (f.getId() == 3) {
+				if (f.getId() == figuraActiva)
+					canvas.drawBitmap(puntosa, width / 4, 5 * height / 7 + offset, null);
+				else
+					canvas.drawBitmap(puntos, width / 4, 5 * height / 7 + offset, null);
+			}
+			if (f.getId() == 4) {
+				if (f.getId() == figuraActiva)
+					canvas.drawBitmap(logrosa, width / 4, 6 * height / 7 + offset, null);
+				else
+					canvas.drawBitmap(logros, width / 4, 6 * height / 7 + offset, null);
 			}
 		}
 	}
@@ -198,17 +240,44 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 																			// 1
 																			// (Jugar).
 							Intent mainIntent = new Intent().setClass(
-									getContext(), Game.class);
+							getContext(), Game.class);
+							Bundle b = new Bundle();
+							b.putLong("time", 0); //Your id
+							mainIntent.putExtras(b); //Put your id to your next Intent
 							((Activity) getContext()).startActivity(mainIntent);
 						}
 						if (figuraActiva == r.getId() && r.getId() == 2) {// Han
 																			// apretado
 																			// el
 																			// boton
-																			// 2.
+																			// 2
+																			// (resistencia).
+							Intent mainIntent = new Intent().setClass(
+									getContext(), Game.class);
+							Bundle b = new Bundle();
+							b.putLong("time", 3000); //Your id
+							mainIntent.putExtras(b); //Put your id to your next Intent
+							((Activity) getContext()).startActivity(mainIntent);
+						}
+						if (figuraActiva == r.getId() && r.getId() == 3) {// Han
+																			// apretado
+																			// el
+																			// boton
+																			// 3.
+																			// (Puntos)
 							Intent mainIntent = new Intent().setClass(
 									getContext(), Points.class);
 							((Activity) getContext()).startActivity(mainIntent);
+						}
+						if (figuraActiva == r.getId() && r.getId() == 4) {// Han
+																			// apretado
+																			// el
+																			// boton
+																			// 4
+																			// (Logros)
+							Intent mainIntent = new Intent().setClass(
+									getContext(), Logros.class);
+							((Activity) getContext()).startActivity(mainIntent);	
 						}
 						// break; check blog entry for explanation on why this
 						// is commented
