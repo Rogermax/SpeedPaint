@@ -49,11 +49,105 @@ public class Logros_Manager  {
 	private void Incrementa_y_desbloquea_logros() {
 		trata_logros_partidas_normales_jugadas();
 		trata_logros_partidas_resistencia_jugadas();
-		//trata_logros_lienzo_rapido();
+		trata_logros_lienzo_rapido();
 		//trata_logros_partidas_seguidas_jugadas();
-		//trata_logros_level_maximo_normal();
+		trata_logros_level_maximo_normal();
 		//trata_logros_level_maximo_resistencia();
 		
+	}
+
+	//Levels, es el level subido en internet;
+	//levels a subir es el level para subir a levels, despues incrementar todo.
+	private void trata_logros_level_maximo_normal() {
+		int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0);
+		int levels = sharedPref.getInt(BGA.getString(R.string.lmn), 0);
+		if (levels_a_subir > 0) 
+		{//Si entra aki sk hace falta incrementar.
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_3), levels_a_subir);
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_5), levels_a_subir);
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_6), levels_a_subir);
+			if (levels < 1) 
+			{
+				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_level_1));
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_3));
+			}
+			if (levels < 3 && (levels+levels_a_subir) >= 3)
+			{
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_5));
+			}
+			if (levels < 5 && (levels+levels_a_subir) >= 5)
+			{
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_6));
+			}
+
+			if (levels < 6 && (levels+levels_a_subir) >= 6)
+			{
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_6));
+			}
+		}
+	}
+	
+	//Levels, es el level subido en internet;
+	//levels a subir es el level para subir a levels, despues incrementar todo.
+	private void trata_logros_level_maximo_normal() {
+		int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmrt), 0);
+		int levels = sharedPref.getInt(BGA.getString(R.string.lmr), 0);
+		if (levels_a_subir > 0) 
+		{//Si entra aki sk hace falta incrementar.
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_2_resistance), levels_a_subir);
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_10_resistance), levels_a_subir);
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_25_resistance), levels_a_subir);
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_100_resistance), levels_a_subir);
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_500_resistance), levels_a_subir);
+			Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_maximum_level_in_resistance), levels_a_subir);
+			if (levels < 1) 
+			{
+				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_level_1));
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_3));
+			}
+			if (levels < 3 && (levels+levels_a_subir) >= 3)
+			{
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_5));
+			}
+			if (levels < 5 && (levels+levels_a_subir) >= 5)
+			{
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_6));
+			}
+
+			if (levels < 6 && (levels+levels_a_subir) >= 6)
+			{
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_level_6));
+			}
+		}
+	}
+
+	private void trata_logros_lienzo_rapido() {
+		float tiempo_a_subir = sharedPref.getFloat(BGA.getString(R.string.lrt), 0);
+		float tiempo = sharedPref.getFloat(BGA.getString(R.string.lr), 0);
+		if (tiempo > tiempo_a_subir) 
+		{//Si entra aki sk hace falta incrementar.
+			if (tiempo > 5000 && tiempo_a_subir <= 5000)
+			{
+				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_5_seconds));
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_4_seconds));
+			}
+			if (tiempo > 4000 && tiempo_a_subir <= 4000)
+			{
+				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_4_seconds));
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_3_seconds));
+			}
+			if (tiempo > 3000 && tiempo_a_subir <= 3000)
+			{
+				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_3_seconds));
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_2_seconds));
+			}
+			if (tiempo > 2000 && tiempo_a_subir <= 2000)
+			{
+				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_2_seconds));
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_1_seconds));
+			}
+			if (tiempo > 1000 && tiempo_a_subir <= 1000) Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_1_seconds));
+		}
 	}
 
 	private void trata_logros_partidas_normales_jugadas() {
@@ -61,8 +155,16 @@ public class Logros_Manager  {
 		int partidas = sharedPref.getInt(BGA.getString(R.string.pn), 0);
 		if (partidas_a_subir > 0) 
 		{//Si entra aki sk hace falta incrementar.
-			if (partidas < 10) Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_10_matches), partidas_a_subir);
-			if (partidas < 100) Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_100_matches), partidas_a_subir);
+			if (partidas < 10 && (partidas+partidas_a_subir) >= 10)
+			{
+				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_10_matches), partidas_a_subir);
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_100_matches));
+			}
+			if (partidas < 100 && (partidas+partidas_a_subir) >= 100)
+			{
+				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_100_matches), partidas_a_subir);
+				Games.Achievements.unhide(GAP, BGA.getString(R.string.achievement_1000_matches));
+			}
 			if (partidas < 1000) Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_1000_matches), partidas_a_subir);
 		}
 	}
