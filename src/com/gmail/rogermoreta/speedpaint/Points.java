@@ -73,8 +73,6 @@ public class Points extends BaseGameActivity implements OnClickListener{
 
 	    }
 	    else if (view.getId() == R.id.button1) {
-
-	    	Logros_Manager LM = new Logros_Manager(this, getApiClient());
 			SharedPreferences sharedPref = getSharedPreferences(
 					getString(R.string.sharedPoints),
 					Context.MODE_PRIVATE);
@@ -98,9 +96,5 @@ public class Points extends BaseGameActivity implements OnClickListener{
 	        // show sign-in button, hide the sign-out button
 	        ((TextView) findViewById(R.id.textView1)).setText("le has dado a ranking: "+Math.max(best, temp));
 	    }
-	}
-
-	private void actualiza_logros() {
-		
 	}
 }

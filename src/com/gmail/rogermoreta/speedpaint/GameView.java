@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
@@ -27,6 +28,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private GameThread thread;
 	Paint p;
 	private long beginTime;
+	private long last_time;
 	private long tiempo_parpadeo;
 	private long tiempo_finpartida;
 
@@ -72,6 +74,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private Bitmap botona;
 	ArrayList<Pair<Integer, Integer>> cola_click;
 	private boolean[][] mask_paint;
+	@SuppressWarnings("unused")
 	private boolean clickan;
 	private boolean fin_partida = false;
 	private boolean cambio = false;
@@ -85,7 +88,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private boolean apretado = false;
 	private boolean resistencia = true;
 	private boolean fin_finpartida = false;
-
+	private SharedPreferences.Editor editor;
+	private SharedPreferences sharedPref;
 	private long tiempo_regeneracion;
 
 	public GameView(Context context) {
@@ -112,6 +116,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		r = new Rectangulo(1, width / 3, 6 * height / 7+offset, width / 3+width/45,
 				height / 8);
 		// CACA
+		sharedPref = getContext()
+				.getSharedPreferences(
+						getContext().getString(R.string.sharedPoints),
+						Context.MODE_PRIVATE);
+		editor = sharedPref.edit();
 		tiempo_regeneracion = tiempo;
 		total_pixels = 10 * width * 213 * height / 11 / 280;
 		pixels = 0;
@@ -264,6 +273,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_UP:
 			if (!partida_ON) {
 				beginTime = System.currentTimeMillis();
+				last_time = System.currentTimeMillis();
 				partida_ON = true;
 			}
 			if (fin_finpartida && apretado) {
@@ -598,6 +608,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					lienzo = Bitmap.createBitmap(width, 6 * height / 7,
 							Bitmap.Config.ARGB_8888);
 					mask_paint = new boolean[width][height];
+
+					editor.putInt(getContext().getString(R.string.lrt),
+							Math.min(sharedPref.getInt(getContext().getString(R.string.lrt),Integer.MAX_VALUE),
+							(int) (System.currentTimeMillis()-(last_time))));
+					last_time = System.currentTimeMillis();
 					beginTime = Math.min(System.currentTimeMillis(), beginTime
 							+ tiempo_regeneracion);
 					level++;
@@ -631,16 +646,36 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	private void guardar_puntos() {
-		SharedPreferences sharedPref = getContext()
-				.getSharedPreferences(
-						getContext().getString(R.string.sharedPoints),
-						Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPref.edit();
 		editor.putInt("puntos_normal_aux", 
 				Math.max(sharedPref.getInt("puntos_normal_aux", 0), (int) (level * 100 + (pixels * 100)	/ (0.9 * total_pixels)))
 				);
 		editor.putBoolean("puntos_normal_bool", 
 				false);
+		Long ultimo = sharedPref.getLong("ultimo_tiempo", 0);
+		if (tiempo_finpartida-ultimo > 1440*60*1000) 
+		{
+			editor.putInt(getContext().getString(R.string.dsjt), 0);
+			editor.putLong("dia_referencia", tiempo_finpartida);
+		}
+		else
+		{
+			Long dia_ref = sharedPref.getLong("dia_referencia", 0) + 1440*60000;
+			if(ultimo < dia_ref && dia_ref < tiempo_finpartida) {
+				editor.putLong("dia_referencia", dia_ref);
+				editor.putInt(getContext().getString(R.string.dsjt), sharedPref.getInt(getContext().getString(R.string.dsjt),0)+1);
+			}
+		}
+		editor.putLong("ultimo_tiempo", tiempo_finpartida);
+		if (resistencia) 
+		{
+			editor.putInt(getContext().getString(R.string.prt), sharedPref.getInt(getContext().getString(R.string.prt),0)+1);
+			editor.putInt(getContext().getString(R.string.lmrt), Math.max(sharedPref.getInt(getContext().getString(R.string.lmrt),0),level));
+		}
+		else 
+		{
+			editor.putInt(getContext().getString(R.string.pnt), sharedPref.getInt(getContext().getString(R.string.pnt),0)+1);
+			editor.putInt(getContext().getString(R.string.lmnt), Math.max(sharedPref.getInt(getContext().getString(R.string.lmnt),0),level));
+		}
 		editor.commit();
 	}
 

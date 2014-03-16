@@ -1,14 +1,11 @@
 package com.gmail.rogermoreta.speedpaint;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.google.android.gms.games.Games;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 public class Logros extends BaseGameActivity implements OnClickListener{
@@ -31,7 +28,6 @@ public class Logros extends BaseGameActivity implements OnClickListener{
 	
 	@Override
 	public void onSignInFailed() {
-		// TODO Auto-generated method stub
 		Log.i("MainActivity", "SigInFailed");
 
 		findViewById(R.id.button1).setEnabled(false);
@@ -43,7 +39,6 @@ public class Logros extends BaseGameActivity implements OnClickListener{
 
 	@Override
 	public void onSignInSucceeded() {
-		// TODO Auto-generated method stub
 		Log.i("MainActivity", "SigInSucced");
 
 		findViewById(R.id.button1).setEnabled(true);
@@ -74,11 +69,9 @@ public class Logros extends BaseGameActivity implements OnClickListener{
 	    }
 	    else if (view.getId() == R.id.button1) {
 
-			SharedPreferences sharedPref = getSharedPreferences(
-							getString(R.string.sharedPoints),
-							Context.MODE_PRIVATE);
+	    	new Logros_Manager(this, getApiClient());
 			
-			startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), 2);
+			
 	        // show sign-in button, hide the sign-out button
 	        ((TextView) findViewById(R.id.textView1)).setText("le has dado a ranking: ");
 	    }

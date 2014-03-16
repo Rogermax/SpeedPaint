@@ -1,7 +1,5 @@
 package com.gmail.rogermoreta.speedpaint;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -32,37 +30,72 @@ public class Logros_Manager  {
 			@Override
 			public void onResult(LoadAchievementsResult arg0) {
 				AchievementBuffer ab = arg0.getAchievements();
-				
-				//partidas maximo normal temporal
-				int level_logros = ab.get(20).getCurrentSteps();
-				int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.pnt), 0);
-				editor.putInt(BGA.getString(R.string.pnt), Math.max(levels_a_subir,level_logros));
-				
-				//level maximo resistencia temporal
-				level_logros = ab.get(21).getCurrentSteps();
-				levels_a_subir = sharedPref.getInt(BGA.getString(R.string.prt), 0);
-				editor.putInt(BGA.getString(R.string.prt), Math.max(levels_a_subir,level_logros));
-				
-				//level maximo normal temporal
-				level_logros = ab.get(22).getCurrentSteps();
-				levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0);
-				editor.putInt(BGA.getString(R.string.lmnt), Math.max(levels_a_subir,level_logros));
-				
-				//level maximo resistencia temporal
-				level_logros = ab.get(23).getCurrentSteps();
-				levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmrt), 0);
-				editor.putInt(BGA.getString(R.string.lmrt), Math.max(levels_a_subir,level_logros));
-				
-				//lienzo_rapido
-				if (ab.get(2).getState() == Achievement.STATE_REVEALED)
+				int i1=0,i2=0,i3=0,i4=0,i5=0,level_logros, levels_a_subir;
+				int j3=0,j4=0;
+				int jj1=0,jj2=0,jj3=0,jj4=0;
+				for (int i = 0; i < ab.getCount(); ++i) {
+					//partidas normal temporal
+					if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_1000_matches)))
+						jj1=i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_1000_resistance_matches)))
+						jj2=i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_level_6)))
+						jj3=i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_maximum_level_in_resistance)))
+						jj4=i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_level_1)))
+						j3=i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_level_2_resistance)))
+						j4=i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_1_seconds)))
+						i5 = i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_2_seconds)))
+						i4 = i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_3_seconds)))
+						i3 = i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_4_seconds)))
+						i2 = i;
+					else if (ab.get(i).getAchievementId().equals(BGA.getString(R.string.achievement_5_seconds)))
+						i1 = i;
+				}
+				if (ab.get(j3).getState() == Achievement.STATE_UNLOCKED)
 				{
-					if (ab.get(5).getState() == Achievement.STATE_REVEALED) 
+					//partidas normal temporal
+					level_logros = ab.get(jj1).getCurrentSteps();
+					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.pnt), 0);
+					editor.putInt(BGA.getString(R.string.pnt), Math.max(levels_a_subir,level_logros));
+					Log.i("Logros_Manager_create_pnt", ab.get(jj1).getName()+": "+level_logros);
+					
+					//level maximo normal temporal
+					level_logros = ab.get(jj3).getCurrentSteps();
+					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0);
+					editor.putInt(BGA.getString(R.string.lmnt), Math.max(levels_a_subir,level_logros));
+					Log.i("Logros_Manager_create_lmnt",  ab.get(jj3).getName()+": "+level_logros);
+				}
+				if (ab.get(j4).getState() == Achievement.STATE_UNLOCKED)
+				{
+					//partidas resistencia temporal
+					level_logros = ab.get(jj2).getCurrentSteps();
+					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.prt), 0);
+					editor.putInt(BGA.getString(R.string.prt), Math.max(levels_a_subir,level_logros));
+					Log.i("Logros_Manager_create_prt",  ab.get(jj2).getName()+": "+level_logros);
+					
+					//level maximo resistencia temporal
+					level_logros = ab.get(jj4).getCurrentSteps();
+					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmrt), 0);
+					editor.putInt(BGA.getString(R.string.lmrt), Math.max(levels_a_subir,level_logros));
+					Log.i("Logros_Manager_create_lmrt",  ab.get(jj4).getName()+": "+level_logros);
+				}
+				//lienzo_rapido
+				if (ab.get(i1).getState() == Achievement.STATE_UNLOCKED)
+				{
+					if (ab.get(i2).getState() == Achievement.STATE_UNLOCKED) 
 					{
-						if (ab.get(12).getState() == Achievement.STATE_REVEALED) 
+						if (ab.get(i3).getState() == Achievement.STATE_UNLOCKED) 
 						{
-							if (ab.get(16).getState() == Achievement.STATE_REVEALED) 
+							if (ab.get(i4).getState() == Achievement.STATE_UNLOCKED) 
 							{
-								if (ab.get(24).getState() == Achievement.STATE_REVEALED) 
+								if (ab.get(i5).getState() == Achievement.STATE_UNLOCKED) 
 								{
 									level_logros = 1000;
 								}
@@ -75,7 +108,8 @@ public class Logros_Manager  {
 					else level_logros = 5000;
 				}
 				else level_logros = Integer.MAX_VALUE;
-				editor.putInt(BGA.getString(R.string.lmnt), level_logros);
+				editor.putInt(BGA.getString(R.string.lrt), level_logros);
+				Log.i("Logros_Manager_create_lrt", ""+level_logros);
 				
 				
 				
@@ -84,32 +118,71 @@ public class Logros_Manager  {
 				//	Log.i("Logros_Manager","El elemento "+i+": "+ab.get(i).getName());
 				//}
 				Incrementa_y_desbloquea_logros();
+				BGA.startActivityForResult(Games.Achievements.getAchievementsIntent(GAP), 2);
 			}
 		};
 		sharedPref = BGA.getSharedPreferences(BGA.getString(R.string.sharedPoints),	Context.MODE_PRIVATE);
 		editor = sharedPref.edit();
 		first_time = isFirstTime();
 		if (first_time) {
+			//Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_1000_matches), 0);
+			//Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_1000_resistance_matches), 0);
+			//Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_maximum_level_in_resistance), 0);
+			//Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_6), 0);
 			Lee_datos_online();
+			editor.putBoolean("first_time", false);
+			editor.commit();
 		}
-		else Incrementa_y_desbloquea_logros();
+		else 
+		{
+			Incrementa_y_desbloquea_logros();
+			BGA.startActivityForResult(Games.Achievements.getAchievementsIntent(GAP), 2);
+		}
 	}
 
 	private void Incrementa_y_desbloquea_logros() {
 		trata_logros_partidas_normales_jugadas();
 		trata_logros_partidas_resistencia_jugadas();
 		trata_logros_lienzo_rapido();
-		//trata_logros_partidas_seguidas_jugadas();
+		trata_logros_partidas_seguidas_jugadas();
 		trata_logros_level_maximo_normal();
 		trata_logros_level_maximo_resistencia();
-		
+		editor.commit();
+	}
+
+	private void trata_logros_partidas_seguidas_jugadas() {
+		int days = sharedPref.getInt(BGA.getString(R.string.dsj), 0);
+		int days_a_subir = sharedPref.getInt(BGA.getString(R.string.dsjt), 0)-days;
+		if (days_a_subir > 0) 
+		{//Si entra aki sk hace falta incrementar.
+			if (days < 3) 
+			{
+				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_3_days),days_a_subir);
+				if ((days+days_a_subir) >= 3) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_7_days));
+			}
+			if (days < 7) 
+			{
+				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_7_days),days_a_subir);
+				if ((days+days_a_subir) >= 7) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_30_days));
+			}if (days < 30) 
+			{
+				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_30_days),days_a_subir);
+				if ((days+days_a_subir) >= 30) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_365_days));
+			}
+			if (days < 365)
+			{
+				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_365_days),days_a_subir);
+			}
+			editor.putInt(BGA.getString(R.string.dsj), days+days_a_subir);
+			editor.putInt(BGA.getString(R.string.dsjt), 0);
+		}
 	}
 
 	//Levels, es el level subido en internet;
 	//levels a subir es el level para subir a levels, despues incrementar todo.
 	private void trata_logros_level_maximo_normal() {
-		int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0);
 		int levels = sharedPref.getInt(BGA.getString(R.string.lmn), 0);
+		int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0)-levels;
 		if (levels_a_subir > 0) 
 		{//Si entra aki sk hace falta incrementar.
 			if (levels < 1) 
@@ -178,8 +251,9 @@ public class Logros_Manager  {
 	}
 
 	private void trata_logros_lienzo_rapido() {
-		int tiempo_a_subir = sharedPref.getInt(BGA.getString(R.string.lrt), 0);
-		int tiempo = sharedPref.getInt(BGA.getString(R.string.lr), 0);
+		int tiempo_a_subir = sharedPref.getInt(BGA.getString(R.string.lrt), Integer.MAX_VALUE);
+		int tiempo = sharedPref.getInt(BGA.getString(R.string.lr), Integer.MAX_VALUE);
+		Log.i("Logros_Manager", ""+tiempo_a_subir);
 		if (tiempo > tiempo_a_subir) 
 		{//Si entra aki sk hace falta incrementar.
 			if (tiempo > 5000 && tiempo_a_subir <= 5000)
@@ -256,37 +330,5 @@ public class Logros_Manager  {
 
 	private void Lee_datos_online() {
 		Games.Achievements.load(GAP, true).setResultCallback(callback);
-	}
-
-	public void Lee_datos_offline() {
-		//Games.Achievements.load(arg0, arg1);
-		//GAP.
-		//Lee_marcadores_de_aviso();
-	}
-
-	public void actualiza_logros() {
-		SharedPreferences sharedPref = BGA.getSharedPreferences(
-				BGA.getString(R.string.sharedPoints),
-				Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPref.edit();
-		
-		
-		
-		
-		
-		if (!sharedPref.getBoolean("puntos_normal_bool", false))
-		{
-			
-		}
-		AchievementBuffer aux = Games.Achievements.load(GAP,false).await().getAchievements();
-		for (int i = 0; i < aux.getCount(); ++i) {
-			Achievement ach = aux.get(i);
-			if (ach.getAchievementId().equals(BGA.getString(R.string.achievement_level_1))) {
-				if (ach.getState() != Achievement.STATE_UNLOCKED /*&& hay cambios en nº level maximo completo*/)
-				{
-					//deslockea o avanza 
-				}
-			}
-		}
 	}
 }
