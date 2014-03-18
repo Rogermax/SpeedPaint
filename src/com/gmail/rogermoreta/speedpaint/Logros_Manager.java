@@ -213,7 +213,7 @@ public class Logros_Manager  {
 	//levels a subir es el level para subir a levels, despues incrementar todo.
 	private void trata_logros_level_maximo_resistencia() {
 		int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmrt), 0);
-		int levels = sharedPref.getInt(BGA.getString(R.string.lmr), 0);
+		int levels = sharedPref.getInt(BGA.getString(R.string.lmr), 0)- levels_a_subir;
 		if (levels_a_subir > 0) 
 		{//Si entra aki sk hace falta incrementar.
 			if (levels < 2) 

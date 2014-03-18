@@ -31,6 +31,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private long last_time;
 	private long tiempo_parpadeo;
 	private long tiempo_finpartida;
+	private final static Paint paint = new Paint();
 
 
 	private InterstitialAd interstitial;
@@ -52,13 +53,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private boolean partida_ON = false;
 	// private int xPos,yPos;
 	private Pair<Integer, Integer> lastPair = null;
-	private Bitmap lienzoBg;
-	private Bitmap lienzo;
-	private Bitmap porcentaje;
-	private Bitmap fintiempo;
-	private Bitmap bg;
-	private Bitmap instruc;
-	private Bitmap instruc2;
+	private static Bitmap lienzoBg;
+	private static Bitmap lienzo;
+	private static Bitmap porcentaje;
+	private static Bitmap fintiempo;
+	private static Bitmap bg;
+	private static Bitmap instruc;
+	private static Bitmap instruc2;
 	private Bitmap resultado;
 	private Bitmap cero;
 	private Bitmap uno;
@@ -116,6 +117,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		r = new Rectangulo(1, width / 3, 6 * height / 7+offset, width / 3+width/45,
 				height / 8);
 		// CACA
+		paint.setARGB(255, 255, 255, 255);
 		sharedPref = getContext()
 				.getSharedPreferences(
 						getContext().getString(R.string.sharedPoints),
@@ -289,7 +291,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void render(Canvas canvas) {
 
-		// canvas.drawColor(Color.BLACK);
+		 //canvas.drawColor(Color.BLACK);
 		/*
 		 * if (clickan) { for (int ii = 0; ii < width; ++ii) { for (int jj = 0;
 		 * jj < height; ++jj) { if (mask_click[ii][jj]) { for (int i =
@@ -301,10 +303,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		 * mask_click[ii][jj] = false; } } } clickan = false; }
 		 */
 
-		canvas.drawBitmap(lienzoBg, 0, 0, null);
-		if (partida_ON && !fin_partida)
-			canvas.drawBitmap(lienzo, 0, 0, null);
+		//canvas.drawBitmap(lienzoBg, 0, 0, null);
 		canvas.drawBitmap(bg, 0, 0, null);
+		if (partida_ON && !fin_partida) 
+		{
+			canvas.drawBitmap(lienzo, 0, 0, null);
+		}
 		if (!partida_ON) {
 			if (cambio) canvas.drawBitmap(instruc2, 0, 0, null);
 			else canvas.drawBitmap(instruc, 0, 0, null);
@@ -312,15 +316,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 
 		if (partida_ON) {
-			displayTime(
-					canvas,
-							(10 * 1000 - time_milis)
-							/ 1000
-							,
-							((10 * 1000 - time_milis) - ((10 * 1000 - time_milis) / 1000) * 1000)
-							/ 10);
-			displayPercentage(canvas, "" + pixels * 100 / total_pixels + "%");
-			displayLevel(canvas, "level: " + level);
+			//displayTime(canvas,(10 * 1000 - time_milis)/ 1000,((10 * 1000 - time_milis) - ((10 * 1000 - time_milis) / 1000) * 1000)/ 10);
+			//displayPercentage(canvas, "" + pixels * 100 / total_pixels + "%");
+			//displayLevel(canvas, "level: " + level);
 		}
 		if (fin_partida) {
 			if (!fin_finpartida) canvas.drawBitmap(fintiempo, 0, 0, null);
@@ -681,16 +679,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private void displayFps(Canvas canvas, String fps) {
 		if (canvas != null && fps != null) {
-			Paint paint = new Paint();
-			paint.setARGB(255, 255, 255, 255);
 			canvas.drawText(fps, this.getWidth() - 100, 50, paint);
 		}
 	}
 
 	private void displayPercentage(Canvas canvas, String perc) {
 		if (canvas != null && perc != null) {
-			Paint paint = new Paint();
-			paint.setARGB(255, 255, 255, 255);
 			canvas.drawText(perc, this.getWidth() / 18, 50, paint);
 		}
 	}
@@ -755,8 +749,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private void displayLevel(Canvas canvas, String level) {
 		if (canvas != null && level != null) {
-			Paint paint = new Paint();
-			paint.setARGB(255, 255, 255, 255);
 			canvas.drawText(level, this.getWidth() / 18, 6 * height / 7 - 100,
 					paint);
 		}
