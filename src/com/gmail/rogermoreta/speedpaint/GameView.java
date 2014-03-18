@@ -2,9 +2,6 @@ package com.gmail.rogermoreta.speedpaint;
 
 import java.util.ArrayList;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,12 +11,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -53,6 +52,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private boolean partida_ON = false;
 	// private int xPos,yPos;
 	private Pair<Integer, Integer> lastPair = null;
+	@SuppressWarnings("unused")
 	private static Bitmap lienzoBg;
 	private static Bitmap lienzo;
 	private static Bitmap porcentaje;
@@ -316,9 +316,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 
 		if (partida_ON) {
-			//displayTime(canvas,(10 * 1000 - time_milis)/ 1000,((10 * 1000 - time_milis) - ((10 * 1000 - time_milis) / 1000) * 1000)/ 10);
-			//displayPercentage(canvas, "" + pixels * 100 / total_pixels + "%");
-			//displayLevel(canvas, "level: " + level);
+			displayTime(canvas,(10 * 1000 - time_milis)/ 1000,((10 * 1000 - time_milis) - ((10 * 1000 - time_milis) / 1000) * 1000)/ 10);
+			displayPercentage(canvas, "" + pixels * 100 / total_pixels + "%");
+			displayLevel(canvas, "level: " + level);
 		}
 		if (fin_partida) {
 			if (!fin_finpartida) canvas.drawBitmap(fintiempo, 0, 0, null);

@@ -1,7 +1,5 @@
 package com.gmail.rogermoreta.speedpaint;
 
-import com.google.android.gms.ads.*;
-
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;

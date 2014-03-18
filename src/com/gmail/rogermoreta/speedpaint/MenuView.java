@@ -2,8 +2,6 @@ package com.gmail.rogermoreta.speedpaint;
 
 import java.util.ArrayList;
 
-import com.google.android.gms.games.Games;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
