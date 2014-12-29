@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gmail.rogermoreta.speedpaint"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="4"
+    android:versionName="1.3" >
 
     <uses-sdk
         android:minSdkVersion="13"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="19" />
 
     <!-- Used to request banner and interstitial ads. -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- Used to avoid sending an ad request if there is no connectivity. -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    
+	<!-- Optional, but without them, you might get less ads and tracking could be less accurate -->
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -63,9 +65,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-         <!-- Activity required to show ad overlays. -->
-        <activity android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+		<activity android:name="com.purplebrain.adbuddiz.sdk.AdBuddizActivity" 
+		               android:theme="@android:style/Theme.Translucent" />
     </application>
 
 </manifest>

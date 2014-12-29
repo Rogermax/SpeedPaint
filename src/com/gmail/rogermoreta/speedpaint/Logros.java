@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
 
 import com.google.example.games.basegameutils.BaseGameActivity;
 
@@ -19,21 +18,19 @@ public class Logros extends BaseGameActivity implements OnClickListener{
 		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		//		WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-	    setContentView(R.layout.activity_main);
+	    setContentView(R.layout.sign_in_logros);
 	    findViewById(R.id.sign_in_button).setOnClickListener(this);
-	    findViewById(R.id.sign_out_button).setOnClickListener(this);  
-	    findViewById(R.id.button1).setOnClickListener(this); 
-		findViewById(R.id.button1).setEnabled(false);
+	    //findViewById(R.id.button1).setOnClickListener(this); 
+		//findViewById(R.id.button1).setEnabled(false);
 	}
 	
 	@Override
 	public void onSignInFailed() {
 		Log.i("MainActivity", "SigInFailed");
 
-		findViewById(R.id.button1).setEnabled(false);
+		//findViewById(R.id.button1).setEnabled(false);
 		
 	    findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-	    findViewById(R.id.sign_out_button).setVisibility(View.GONE);
 	    
 	}
 
@@ -41,10 +38,9 @@ public class Logros extends BaseGameActivity implements OnClickListener{
 	public void onSignInSucceeded() {
 		Log.i("MainActivity", "SigInSucced");
 
-		findViewById(R.id.button1).setEnabled(true);
+		//findViewById(R.id.button1).setEnabled(true);
 		
 	    findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-	    findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 
 
 	}
@@ -55,26 +51,14 @@ public class Logros extends BaseGameActivity implements OnClickListener{
 	        // start the asynchronous sign in flow
 	        beginUserInitiatedSignIn();
 	    }
-	    else if (view.getId() == R.id.sign_out_button) {
-	        // sign out.
-	        signOut();
-
-			findViewById(R.id.button1).setEnabled(false);
-			
-	        // show sign-in button, hide the sign-out button
-	        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-	        findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-	        
-
-	    }
-	    else if (view.getId() == R.id.button1) {
+	    /*else if (view.getId() == R.id.button1) {
 
 	    	new Logros_Manager(this, getApiClient());
 			
 			
 	        // show sign-in button, hide the sign-out button
 	        ((TextView) findViewById(R.id.textView1)).setText("le has dado a ranking: ");
-	    }
+	    }*/
 	}
 
 }

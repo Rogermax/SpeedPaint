@@ -2,6 +2,10 @@ package com.gmail.rogermoreta.speedpaint;
 
 import java.util.ArrayList;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
+import com.google.example.games.basegameutils.BaseGameActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -32,56 +38,20 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 	private Bitmap logros;
 	private Bitmap logrosa;
 	private int offset;
+	private GoogleApiClient GAP;
+	private BaseGameActivity BGA;
 	
 
 	public MenuView(Context context) {
 		super(context);
+		getHolder().addCallback(this);	
 	}
 
-	public MenuView(Context context, int width, int height) {
-		super(context);
-		p = new Paint();
-		this.width = width;
-		this.height = height;
-		getHolder().addCallback(this);
-		offset = - height / 14;
-		Bitmap background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.menut);
-		bg = Bitmap.createScaledBitmap(background, width, height, true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonjugar);
-		jugar = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonjugara);
-		jugara = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonresistencia);
-		resistencia = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonresistenciaa);
-		resistenciaa = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonpuntos);
-		puntos = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonpuntosa);
-		puntosa = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonlogros);
-		logros = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
-		background = BitmapFactory.decodeResource(getResources(),
-				R.drawable.botonlogrosa);
-		logrosa = Bitmap.createScaledBitmap(background, width / 2, height / 7,
-				true);
+	public MenuView(Context context, AttributeSet attributeSet) {
+		super(context,attributeSet);
+		getHolder().addCallback(this);	
 	}
-
+	
 	@Override
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
 		// nothing here
@@ -240,7 +210,7 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 							Intent mainIntent = new Intent().setClass(
 							getContext(), Game.class);
 							Bundle b = new Bundle();
-							b.putLong("time", 0); //Your id
+							b.putLong("time", 500); //Your id
 							mainIntent.putExtras(b); //Put your id to your next Intent
 							((Activity) getContext()).startActivity(mainIntent);
 						}
@@ -273,9 +243,9 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 																			// boton
 																			// 4
 																			// (Logros)
-							Intent mainIntent = new Intent().setClass(
-									getContext(), Logros.class);
-							((Activity) getContext()).startActivity(mainIntent);	
+							@SuppressWarnings("unused")
+							Logros_Manager lm = new Logros_Manager(BGA,GAP);
+							BGA.startActivityForResult(Games.Achievements.getAchievementsIntent(GAP), 2);
 						}
 						// break; check blog entry for explanation on why this
 						// is commented
@@ -287,5 +257,32 @@ public class MenuView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 
 		return true;
+	}
+
+	public void Init(BaseGameActivity base, GoogleApiClient googleApiClient, int width, int height) {
+		p = new Paint();
+		this.width = width;
+		this.height = height;
+		GAP = googleApiClient;
+		BGA = base;
+		offset = - height / 14;
+		Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.menut);
+		bg = Bitmap.createScaledBitmap(background, width, height, true);
+		background = ((BitmapDrawable) getResources().getDrawable(R.drawable.botonjugar)).getBitmap();
+		jugar = Bitmap.createScaledBitmap(background, width / 2, height / 7,true);
+		background = ((BitmapDrawable) getResources().getDrawable(R.drawable.botonjugara)).getBitmap();
+		jugara = Bitmap.createScaledBitmap(background, width / 2, height / 7,true);
+		background = ((BitmapDrawable) getResources().getDrawable(R.drawable.botonresistencia)).getBitmap();
+		resistencia = Bitmap.createScaledBitmap(background, width / 2, height / 7,true);
+		background = ((BitmapDrawable) getResources().getDrawable(R.drawable.botonresistenciaa)).getBitmap();
+		resistenciaa = Bitmap.createScaledBitmap(background, width / 2, height / 7,	true);
+		background =  ((BitmapDrawable) getResources().getDrawable(R.drawable.botonpuntos)).getBitmap();
+		puntos = Bitmap.createScaledBitmap(background, width / 2, height / 7,	true);
+		background =  ((BitmapDrawable) getResources().getDrawable(R.drawable.botonpuntosa)).getBitmap();
+		puntosa = Bitmap.createScaledBitmap(background, width / 2, height / 7,	true);
+		background = ((BitmapDrawable) getResources().getDrawable(R.drawable.botonlogros)).getBitmap();
+		logros = Bitmap.createScaledBitmap(background, width / 2, height / 7,	true);
+		background = ((BitmapDrawable) getResources().getDrawable(R.drawable.botonlogrosa)).getBitmap();
+		logrosa = Bitmap.createScaledBitmap(background, width / 2, height / 7,	true);
 	}
 }

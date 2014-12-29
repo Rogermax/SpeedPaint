@@ -62,13 +62,13 @@ public class Logros_Manager  {
 				{
 					//partidas normal temporal
 					level_logros = ab.get(jj1).getCurrentSteps();
-					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.pnt), 0);
-					editor.putInt(BGA.getString(R.string.pnt), Math.max(levels_a_subir,level_logros));
+					editor.putInt(BGA.getString(R.string.pn), level_logros);
 					Log.i("Logros_Manager_create_pnt", ab.get(jj1).getName()+": "+level_logros);
 					
 					//level maximo normal temporal
 					level_logros = ab.get(jj3).getCurrentSteps();
 					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0);
+					editor.putInt(BGA.getString(R.string.lmn), level_logros);
 					editor.putInt(BGA.getString(R.string.lmnt), Math.max(levels_a_subir,level_logros));
 					Log.i("Logros_Manager_create_lmnt",  ab.get(jj3).getName()+": "+level_logros);
 				}
@@ -76,13 +76,13 @@ public class Logros_Manager  {
 				{
 					//partidas resistencia temporal
 					level_logros = ab.get(jj2).getCurrentSteps();
-					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.prt), 0);
-					editor.putInt(BGA.getString(R.string.prt), Math.max(levels_a_subir,level_logros));
+					editor.putInt(BGA.getString(R.string.pr), level_logros);
 					Log.i("Logros_Manager_create_prt",  ab.get(jj2).getName()+": "+level_logros);
 					
 					//level maximo resistencia temporal
 					level_logros = ab.get(jj4).getCurrentSteps();
 					levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmrt), 0);
+					editor.putInt(BGA.getString(R.string.lmr), level_logros);
 					editor.putInt(BGA.getString(R.string.lmrt), Math.max(levels_a_subir,level_logros));
 					Log.i("Logros_Manager_create_lmrt",  ab.get(jj4).getName()+": "+level_logros);
 				}
@@ -108,15 +108,18 @@ public class Logros_Manager  {
 					else level_logros = 5000;
 				}
 				else level_logros = Integer.MAX_VALUE;
-				editor.putInt(BGA.getString(R.string.lrt), level_logros);
-				Log.i("Logros_Manager_create_lrt", ""+level_logros);
+				editor.putInt(BGA.getString(R.string.lrt), Math.min(sharedPref.getInt(BGA.getString(R.string.lrt), Integer.MAX_VALUE), level_logros));
+				Log.i("Logros_Manager_create_lrt", ""+Math.min(sharedPref.getInt(BGA.getString(R.string.lrt), Integer.MAX_VALUE), level_logros));
 				
-				
+
+				editor.putInt(BGA.getString(R.string.dsj), 0);
 				
 				//for (int i = 0; i < ab.getCount(); ++i)
 				//{
 				//	Log.i("Logros_Manager","El elemento "+i+": "+ab.get(i).getName());
 				//}
+
+				editor.commit();
 				Incrementa_y_desbloquea_logros();
 				BGA.startActivityForResult(Games.Achievements.getAchievementsIntent(GAP), 2);
 			}
@@ -151,60 +154,52 @@ public class Logros_Manager  {
 	}
 
 	private void trata_logros_partidas_seguidas_jugadas() {
-		int days = sharedPref.getInt(BGA.getString(R.string.dsj), 0);
-		int days_a_subir = sharedPref.getInt(BGA.getString(R.string.dsjt), 0)-days;
+		int days_submited = sharedPref.getInt(BGA.getString(R.string.dsj), 0);
+		int days_que_lleva_ahora = sharedPref.getInt(BGA.getString(R.string.dsjt), 0);
+		int days_a_subir = days_que_lleva_ahora-days_submited;
 		if (days_a_subir > 0) 
 		{//Si entra aki sk hace falta incrementar.
-			if (days < 3) 
+			if (days_submited < 3) 
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_3_days),days_a_subir);
-				if ((days+days_a_subir) >= 3) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_7_days));
 			}
-			if (days < 7) 
+			if (days_submited < 7) 
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_7_days),days_a_subir);
-				if ((days+days_a_subir) >= 7) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_30_days));
-			}if (days < 30) 
+			}
+			if (days_submited < 30) 
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_30_days),days_a_subir);
-				if ((days+days_a_subir) >= 30) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_365_days));
 			}
-			if (days < 365)
-			{
-				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_365_days),days_a_subir);
-			}
-			editor.putInt(BGA.getString(R.string.dsj), days+days_a_subir);
-			editor.putInt(BGA.getString(R.string.dsjt), 0);
+			editor.putInt(BGA.getString(R.string.dsj), days_que_lleva_ahora);
 		}
 	}
 
 	//Levels, es el level subido en internet;
 	//levels a subir es el level para subir a levels, despues incrementar todo.
 	private void trata_logros_level_maximo_normal() {
-		int levels = sharedPref.getInt(BGA.getString(R.string.lmn), 0);
-		int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0)-levels;
+		int level_al_qual_subir = sharedPref.getInt(BGA.getString(R.string.lmnt), 0);
+		int level_anterior = sharedPref.getInt(BGA.getString(R.string.lmn), 0);
+		int levels_a_subir = level_al_qual_subir-level_anterior;
 		if (levels_a_subir > 0) 
 		{//Si entra aki sk hace falta incrementar.
-			if (levels < 1) 
+			if (level_anterior < 1) 
 			{
 				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_level_1));
-				Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_level_3));
 			}
-			if (levels < 3)
+			if (level_anterior < 3)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_3), levels_a_subir);
-				if ((levels+levels_a_subir) >= 3) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_level_5));
 			}
-			if (levels < 5)
+			if (level_anterior < 5)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_5), levels_a_subir);
-				if ((levels+levels_a_subir) >= 5) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_level_6));
 			}
-			if (levels < 6)
+			if (level_anterior < 6)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_6), levels_a_subir);
 			}
-			editor.putInt(BGA.getString(R.string.lmn), levels+levels_a_subir);
+			editor.putInt(BGA.getString(R.string.lmn), level_al_qual_subir);
 			editor.putInt(BGA.getString(R.string.lmnt), 0);
 		}
 	}
@@ -212,40 +207,40 @@ public class Logros_Manager  {
 	//Levels, es el level subido en internet;
 	//levels a subir es el level para subir a levels, despues incrementar todo.
 	private void trata_logros_level_maximo_resistencia() {
-		int levels_a_subir = sharedPref.getInt(BGA.getString(R.string.lmrt), 0);
-		int levels = sharedPref.getInt(BGA.getString(R.string.lmr), 0)- levels_a_subir;
+		int level_al_qual_subir = sharedPref.getInt(BGA.getString(R.string.lmrt), 0);
+		int level_anterior = sharedPref.getInt(BGA.getString(R.string.lmr), 0);
+		int levels_a_subir = level_al_qual_subir-level_anterior;
 		if (levels_a_subir > 0) 
 		{//Si entra aki sk hace falta incrementar.
-			if (levels < 2) 
+			if (level_anterior < 2) 
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_2_resistance), levels_a_subir);
-				if ((levels+levels_a_subir) >= 2) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_level_10_resistance));
 			}
-			if (levels < 10)
+			if (level_anterior < 10)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_10_resistance), levels_a_subir);
-				if ((levels+levels_a_subir) >= 10) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_level_25_resistance));
 			}
-			if (levels < 25)
+			if (level_anterior < 25)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_25_resistance), levels_a_subir);
-				if ((levels+levels_a_subir) >= 25) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_level_100_resistance));
 			}
-			if (levels < 100)
+			if (level_anterior < 50)
+			{
+				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_50_resistance), levels_a_subir);
+			}
+			if (level_anterior < 100)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_100_resistance), levels_a_subir);
-				if ((levels+levels_a_subir) >= 100) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_level_500_resistance));
 			}
-			if (levels < 500)
+			if (level_anterior < 500)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_level_500_resistance), levels_a_subir);
-				if ((levels+levels_a_subir) >= 500) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_maximum_level_in_resistance));
 			}
-			if (levels < 999)
+			if (level_anterior < 999)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_maximum_level_in_resistance), levels_a_subir);
 			}
-			editor.putInt(BGA.getString(R.string.lmr), levels+levels_a_subir);
+			editor.putInt(BGA.getString(R.string.lmr), level_al_qual_subir);
 			editor.putInt(BGA.getString(R.string.lmrt), 0);
 		}
 	}
@@ -259,26 +254,22 @@ public class Logros_Manager  {
 			if (tiempo > 5000 && tiempo_a_subir <= 5000)
 			{
 				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_5_seconds));
-				Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_4_seconds));
 			}
 			if (tiempo > 4000 && tiempo_a_subir <= 4000)
 			{
 				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_4_seconds));
-				Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_3_seconds));
 			}
 			if (tiempo > 3000 && tiempo_a_subir <= 3000)
 			{
 				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_3_seconds));
-				Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_2_seconds));
 			}
 			if (tiempo > 2000 && tiempo_a_subir <= 2000)
 			{
 				Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_2_seconds));
-				Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_1_seconds));
 			}
 			if (tiempo > 1000 && tiempo_a_subir <= 1000) Games.Achievements.unlock(GAP, BGA.getString(R.string.achievement_1_seconds));
-			editor.putInt(BGA.getString(R.string.lmn), tiempo_a_subir);
-			editor.putInt(BGA.getString(R.string.lmnt), Integer.MAX_VALUE);
+			editor.putInt(BGA.getString(R.string.lr), tiempo_a_subir);
+			editor.putInt(BGA.getString(R.string.lrt), Integer.MAX_VALUE);
 		}
 	}
 
@@ -290,12 +281,10 @@ public class Logros_Manager  {
 			if (partidas < 10)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_10_matches), partidas_a_subir);
-				if ((partidas+partidas_a_subir) >= 10) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_100_matches));
 			}
 			if (partidas < 100)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_100_matches), partidas_a_subir);
-				if ((partidas+partidas_a_subir) >= 100) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_1000_matches));
 			}
 			if (partidas < 1000) Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_1000_matches), partidas_a_subir);
 			editor.putInt(BGA.getString(R.string.pn), partidas+partidas_a_subir);
@@ -311,12 +300,10 @@ public class Logros_Manager  {
 			if (partidas < 10)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_10_resistance_matches), partidas_a_subir);
-				if ((partidas+partidas_a_subir) >= 10) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_100_resistance_matches));
 			}
 			if (partidas < 100)
 			{
 				Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_100_resistance_matches), partidas_a_subir);
-				if ((partidas+partidas_a_subir) >= 100) Games.Achievements.reveal(GAP, BGA.getString(R.string.achievement_1000_resistance_matches));
 			}
 			if (partidas < 1000) Games.Achievements.increment(GAP, BGA.getString(R.string.achievement_1000_resistance_matches), partidas_a_subir);
 			editor.putInt(BGA.getString(R.string.pr), partidas+partidas_a_subir);
